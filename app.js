@@ -45,7 +45,7 @@ io.on('connection', function(socket){
 	});
 	socket.on('gameLoad', function(){
 		var roomNum = roomManager.roomIndex[socket.id];
-		io.to(roomNum).emit('gameLoad', {ready : ++roomManager.rooms[roomNum].userCnt++});
+		io.to(roomNum).emit('gameLoad', {ready : ++roomManager.rooms[roomNum].userCnt});
 	});
 	socket.on('move', function(data){
 		var roomNum = roomManager.roomIndex[socket.id];

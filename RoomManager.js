@@ -3,7 +3,6 @@
 function RoomManager(io){
 
   var RmMg = this;
-  RmMg.userCnt = 0;
   RmMg.rooms = [];
   RmMg.roomIndex = [];
   RmMg.create = function(data0,data1){
@@ -66,6 +65,7 @@ function Room(num, player0, player1)
 {
   this.num = num;
   this.players = [player0, player1];
+  this.userCnt = 0;
 }
 
 module.exports = RoomManager;
