@@ -52,6 +52,7 @@ function RoomManager(io){
       var room = RmMg.rooms[roomNum];
 
       room.players.forEach(function(data){
+        data.socket.emit('getout', {a : "a"});
         LbMg.push(data);
         delete RmMg.roomIndex[data.socket.id];
       });

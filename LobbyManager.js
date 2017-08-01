@@ -38,8 +38,8 @@ function LobbyManager(io){
         index1 = i;
       }
     }
-    if(index0 >= 0) LbMg.mouse.splice(index0,1);
-    if(index1 >= 0) LbMg.cat.splice(index1,1);
+    if(index0 >= 0) LbMg.mouse.splice(index0, 1);
+    if(index1 >= 0) LbMg.cat.splice(index1, 1);
     //console.log("index :", index);
     //console.log("length :", LbMg.lobby.length);
   };
