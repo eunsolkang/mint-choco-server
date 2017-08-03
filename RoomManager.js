@@ -49,15 +49,14 @@ function RoomManager(io){
   };
   RmMg.destroy = function(roomNum, LbMg){
       var room = RmMg.rooms[roomNum];
-
       room.players.forEach(function(data){
         data.socket.emit('getout', {a : "a"});
-        LbMg.push(data);
+
+  			LbMg.kick(data.socket);
         delete RmMg.roomIndex[data.socket.id];
       });
-      console.log(room);
+      console.log('방이 터졌다...흑 흑 흑 너무 슬퍼용');
       delete RmMg.rooms[roomNum];
-
   };
 }
 

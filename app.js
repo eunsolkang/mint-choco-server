@@ -12,7 +12,7 @@
 var io = require('socket.io')({
 	transports: ['websocket'],
 });
-io.attach(3000);
+io.attach(7727);
 var userList = [];
 
 
@@ -25,10 +25,11 @@ io.on('connection', function(socket){
 	console.log('영남이형');
 	var nickname;
 	socket.on('join', function(data){
-		nickname = data;
+		nickname = data.name;
+
 		console.log(data);
-		userList.push(nickname);
-		socket.emit('join', nickname);
+		userList.push(data.name);
+		socket.emit('join', data);
 		console.log('userList : ', userList);
 	});
 
@@ -53,20 +54,24 @@ io.on('connection', function(socket){
 	});
 	socket.on('bullet', function(data){
 		var roomNum = roomManager.roomIndex[socket.id];
-		io.to(roomNum).emit('bullet', {a : "a"});
+		io.to(roomNum).emit('bullet', data);
 	});
 	socket.on('rotate', function(data){
 		var roomNum = roomManager.roomIndex[socket.id];
 		socket.broadcast.to(roomNum).emit('rotate', data);
 	});
+	socket.on('hp', function(data){
+		var roomNum = roomManager.roomIndex[socket.id];
+		socket.broadcast.to(roomNum).emit('hp', data);
+	});
 
 	socket.on('disconnect', function(){;
 		var roomNum = roomManager.roomIndex[socket.id];
+
     if(roomNum){
-      roomManager.destroy(roomNum, lobbyManager);
+			roomManager.rooms[roomNum].userCnt--;
+			roomManager.destroy(roomNum, lobbyManager);
     }
-		roomManager.rooms[roomNum].userCnt --;
-    lobbyManager.kick(socket);
 		lobbyManager.dispatch(roomManager);
     console.log('user disconnected: ', socket.id);
     //console.log(socket);
