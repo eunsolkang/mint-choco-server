@@ -12,30 +12,30 @@
 var io = require('socket.io')({
 	transports: ['websocket'],
 });
-io.attach(7727);
+io.attach(7728);
 var userList = [];
-
-
-
+console.log('server is on port 7728');
+// var catWinCnt = 0;
+// var mouseWinCnt = 0;
 // var socket = io();
 var lobbyManager = new (require('./LobbyManager.js'))(io);
 var roomManager = new (require('./RoomManager.js'))(io);
 
 io.on('connection', function(socket){
+	var matching = false;
 	console.log('영남이형');
 	var nickname;
 	socket.on('join', function(data){
 		nickname = data.name;
 
 		console.log(data);
-		userList.push(data.name);
 		socket.emit('join', data);
-		console.log('userList : ', userList);
 	});
 
 	socket.on('pick', function(data){
 		var tmp = data.pick;
 		console.log(tmp);
+		matching = true;
 		lobbyManager.push({socket, nickname, tmp});
 		lobbyManager.dispatch(roomManager);
 	});
@@ -64,14 +64,73 @@ io.on('connection', function(socket){
 		var roomNum = roomManager.roomIndex[socket.id];
 		socket.broadcast.to(roomNum).emit('hp', data);
 	});
+	socket.on('die', (data)=>{
+		console.log('죽음을 감지!');
+		if(data.pick == 0){
+			console.log('고양이의 승리!');
+			var roomNum = roomManager.roomIndex[socket.id];
+			var room = roomManager.rooms[roomNum];
+			room.players.forEach(function(pack){
+				console.log(pack.tmp);
+				if(data.pick == pack.tmp)
+				{
+					pack.socket.emit('lose', {a : "a"});
+				}
+				else{
+					pack.socket.emit('win', {a : "a"});
+				}
+				// delete RmMg.roomIndex[data.socket.id];
+			});
+			var roomNum = roomManager.roomIndex[socket.id];
+			// io.to(roomNum).emit('total', {
+			// 	cat : catWinCnt,
+			// 	mouse : mouseWinCnt,
+			// });
+			if(roomNum){
+				console.log('게임결과후 부서지는 방');
+				roomManager.rooms[roomNum].userCnt--;
+				roomManager.destroy(roomNum, lobbyManager);
+			}
+			lobbyManager.dispatch(roomManager);
+		}
+		else if(data.pick == 1){
+			console.log('쥐의 승리');
+			var roomNum = roomManager.roomIndex[socket.id];
+			var room = roomManager.rooms[roomNum];
+			room.players.forEach(function(pack){
+				if(data.pick == pack.tmp)
+				{
+					pack.socket.emit('lose', {a : "a"});
+				}
+				else{
+					pack.socket.emit('win', {a : "a"});
+				}
+				// delete RmMg.roomIndex[data.socket.id];
+			});
+			var roomNum = roomManager.roomIndex[socket.id];
+			// io.to(roomNum).emit('total', {
+			// 	cat : catWinCnt,
+			// 	mouse : mouseWinCnt,
+			// });
+			if(roomNum){
+				console.log('게임결과후 부서지는 방');
+				roomManager.rooms[roomNum].userCnt--;
+				roomManager.destroy(roomNum, lobbyManager);
+			}
+			lobbyManager.dispatch(roomManager);
+		}
+	});
+	socket.on('disconnect', function(){
 
-	socket.on('disconnect', function(){;
 		var roomNum = roomManager.roomIndex[socket.id];
-
     if(roomNum){
+			console.log('탈주로 인해 부서지는 방');
 			roomManager.rooms[roomNum].userCnt--;
 			roomManager.destroy(roomNum, lobbyManager);
     }
+		if(matching){
+			lobbyManager.kick(socket);
+		}
 		lobbyManager.dispatch(roomManager);
     console.log('user disconnected: ', socket.id);
     //console.log(socket);

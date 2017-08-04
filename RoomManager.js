@@ -16,42 +16,12 @@ function RoomManager(io){
     RmMg.roomIndex[data1.socket.id] = roomNum;
 
     console.log("Room Created :", roomNum);
-    // data0.socket.on('userData', function(data){
-    //   io.to(roomNum).emit('userData', data);
-    // });
-    // data1.socket.on('userData', function(data){
-    //   io.to(roomNum).emit('userData', data);
-    // });
-    // data0.socket.on('gameLoad', function(){
-    //   io.to(roomNum).emit('gameLoad', {ready : ++userCnt});
-    // });
-    // data1.socket.on('gameLoad', function(){
-    //   io.to(roomNum).emit('gameLoad', {ready : ++userCnt});
-    // });
-    // data0.socket.on('move', function(data){
-    //   socket.broadcate.to(roomNum).emit('move', data);
-    // });
-    // data1.socket.on('move', function(data){
-    //   socket.broadcate.to(roomNum).emit('move', data);
-    // });
-    // data0.socket.on('bullet', function(data){
-    //   io.to(roomNum).emit('bullet', {a : "a"});
-    // });
-    // data1.socket.on('bullet', function(data){
-    //   io.to(roomNum).emit('bullet', {a : "a"});
-    // });
-    // data0.socket.on('rotate', function(data){
-    //   data0.socket.broadcate.to(roomNum).emit('rotate', data);
-    // });
-    // data1.socket.on('rotate', function(data){
-    //   data0.socket.broadcate.to(roomNum).emit('rotate', data);
-    // })
+  
   };
   RmMg.destroy = function(roomNum, LbMg){
       var room = RmMg.rooms[roomNum];
       room.players.forEach(function(data){
         data.socket.emit('getout', {a : "a"});
-
   			LbMg.kick(data.socket);
         delete RmMg.roomIndex[data.socket.id];
       });

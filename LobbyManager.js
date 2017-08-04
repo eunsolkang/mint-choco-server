@@ -29,12 +29,14 @@ function LobbyManager(io){
     for(var i=0; i<LbMg.mouse.length; i++)
     {
       if(LbMg.mouse[i].socket == socket){
+        console.log('고양이 새끼가 나감');
         index0 = i;
       }
     }
     for(var i=0; i<LbMg.cat.length; i++)
     {
       if(LbMg.cat[i].socket == socket){
+        console.log('쥐 새끼가 나감');
         index1 = i;
       }
     }
